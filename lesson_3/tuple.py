@@ -19,3 +19,7 @@ tuple_1 = tuple(list_1)
 print(tuple_1)
 
 print(id(tuple_1))
+
+tuple_2 = tuple('1252')
+
+print(tuple_2)
