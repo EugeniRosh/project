@@ -23,3 +23,7 @@ print(id(tuple_1))
 tuple_2 = tuple('1252')
 
 print(tuple_2)
+
+tuple_3 = tuple((1,))
+
+print(tuple_3)
