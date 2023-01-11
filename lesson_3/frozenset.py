@@ -10,6 +10,6 @@ frozenset_3 = frozenset((1,))
 
 print(frozenset_3)
 
-
+print(type(frozenset_3))
 
 print(id(frozenset_2))
