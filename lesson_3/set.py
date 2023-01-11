@@ -30,6 +30,8 @@ print(set_3)
 
 print(set_3.pop())
 
+print(id(set_3))
+
 print(set_3)
 
 set_3.clear()
