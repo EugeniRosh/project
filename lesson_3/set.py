@@ -1,6 +1,6 @@
 set_1 = ['hello', 'daddy', 'mum', 'hello']
 
-print(set(set_1))
+print(set_1)
 
 set_2 = set('heLloworLd')
 
