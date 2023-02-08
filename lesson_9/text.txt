@@ -1,0 +1,8 @@
+﻿Data and privacy
+Controversial voice-activated dolls have shown some of the risks of connected toys - insecure Bluetooth connections led to children’s conversations being recorded and the toys could even be hacked.
+
+So how do Lego deal with these issues?
+
+"For the last few years, we have developed and created connected toys, so we have a set of established safety and compliance processes," explained Tim Taylor-Bowden, the Lead Technology Architect at LEGO Group.
+
+"LEGO has a priority focus on safety for kids, on privacy, so by default we have a lot of practices which make our products safe before we even understand and consider the legislation. For example, our connected toys currently do not collect any data from the users."
