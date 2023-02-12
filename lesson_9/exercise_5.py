@@ -1,9 +1,11 @@
-﻿"""Модуль работы с файлом sp500.csv через консоль"""
+﻿"""Module for working with the sp500.csv file via the console"""
 import csv
+from functools import wraps
 
 
-def decorator(func):
-    """Декоратор наличие запроса в кэше и создающий кэш"""
+def cache(func):
+    """Query Cache Detector and Cache Creator"""
+    @wraps(func)
     def wrapper(request):
         global dict_cache
         if dict_cache.get(request) is not None:
@@ -13,7 +15,7 @@ def decorator(func):
     return wrapper
 
 
-@decorator
+@cache
 def find_info_by_name(company: str) -> list:
     companies = []
     with open('sp500.csv', 'r', encoding='utf=8') as file:
@@ -25,7 +27,7 @@ def find_info_by_name(company: str) -> list:
     return companies
 
 
-@decorator
+@cache
 def get_all_companies_by_sector(sector: str) -> list:
     company = []
     with open('sp500.csv', 'r', encoding='utf=8') as file:
