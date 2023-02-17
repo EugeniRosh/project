@@ -7,16 +7,15 @@ from business_logic import (
    add_new_company,
    update_company_name,
    delete_company,
-   populate_file_with_random_data
+   populate_file_with_random_data,
+   truncate_all,
     )
-from data_access import writer_file_csv500
 from validators import (
     validate_choice,
-    validate_name_company,
-    validate_symbol,
-    validate_sector,
+    validate_name_company_choice,
     validate_price,
-    validate_update_company,
+    validate_number_of_generated_companies,
+    validate_symbol,
     )
 from errors import IncorrectUserInputError
 
@@ -39,17 +38,20 @@ while True:
 
     if int(choice) == 1:
         company_name = input('Enter the name of company: ')
-        find_info_by_name(company_name)
+        companies = find_info_by_name(company_name)
+        print(f'Companies with the name: {company_name}', *companies, sep='\n')
 
     elif int(choice) == 2:
         sector_name = input('Enter the name of sector: ')
-        get_all_companies_by_sector(sector_name)
+        company = get_all_companies_by_sector(sector_name)
+        print(f'Companies in the sector: {sector_name}', *company, sep='\n')
 
     elif int(choice) == 3:
-        calculate_average_price()
+        print(f'Average share price: {calculate_average_price()}')
 
     elif int(choice) == 4:
-        get_top_10_companies()
+        top_10 = get_top_10_companies()
+        print('Top 10 companies: ', *top_10, sep='\n')
 
     elif int(choice) == 5:
         symbol = input('Enter company symbol: ')
@@ -61,17 +63,12 @@ while True:
 
         name = input('Enter company name: ')
         try:
-            validate_name_company(name)
+            validate_name_company_choice(name)
         except IncorrectUserInputError as err:
             print(err)
             continue
 
         sector = input('Enter company sector: ')
-        try:
-            validate_sector(sector)
-        except IncorrectUserInputError as err:
-            print(err)
-            continue
 
         price = input('Enter company price: ')
         try:
@@ -84,15 +81,10 @@ while True:
 
     elif int(choice) == 6:
         symbol = input('Enter company symbol: ')
-        try:
-            validate_update_company(symbol)
-        except IncorrectUserInputError as err:
-            print(err)
-            continue
 
         name = input('Enter new company name: ')
         try:
-            validate_name_company(name)
+            validate_name_company_choice(name)
         except IncorrectUserInputError as err:
             print(err)
             continue
@@ -104,10 +96,15 @@ while True:
         delete_company(symbol)
 
     elif int(choice) == 8:
-        writer_file_csv500('')
+        truncate_all('')
 
     elif int(choice) == 9:
         number = input('Enter the number of entries to create: ')
+        try:
+            validate_number_of_generated_companies(number)
+        except IncorrectUserInputError as err:
+            print(err)
+            continue
         populate_file_with_random_data(number)
 
     elif int(choice) == 10:
