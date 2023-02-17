@@ -3,8 +3,13 @@ from data_access import (
     dictreader_file_csv500,
     append_file_csv500,
     writer_file_csv500,
-    reader_file_csv500
-)
+    reader_file_csv500,
+    ErrorAlreadyExists,
+    validate_update_company,
+    validate_symbol_data,
+    validate_name_data,
+    validate_sector,
+    )
 from functools import wraps
 from faker import Faker
 from random import choice, uniform
@@ -22,6 +27,7 @@ def cache(func):
             print(dict_cache.get(request))
         else:
             dict_cache.setdefault(request, func(request))
+            return func(request)
     return wrapper
 
 
@@ -37,7 +43,6 @@ def find_info_by_name(company: str) -> list:
                 'Stock price': row.get('Price')
                 }
             )
-    print(f'Companies with the name: {company}', *companies, sep='\n')
     return companies
 
 
@@ -47,7 +52,6 @@ def get_all_companies_by_sector(sector: str) -> list:
     for row in dictreader_file_csv500():
         if sector.lower() in row['Sector'].lower():
             company.append(row['Name'])
-    print(f'Companies in the sector: {sector}', *company, sep='\n')
     return company
 
 
@@ -57,7 +61,8 @@ def calculate_average_price() -> None:
     for row in dictreader_file_csv500():
         all_price += float(row.get('Price'))
         counter += 1
-    print(f'Average share price: {all_price / counter}')
+    all_price = all_price / counter
+    return all_price
 
 
 def get_top_10_companies() -> None:
@@ -69,10 +74,28 @@ def get_top_10_companies() -> None:
     )
     for row in rows_sort[:10]:
         top_10.append((row['Name'], row['Price']))
-    print('Top 10 companies: ', *top_10, sep='\n')
+    return top_10
 
 
 def add_new_company(symbol, name, sector, price: str) -> None:
+    try:
+        validate_symbol_data(symbol)
+    except ErrorAlreadyExists as err:
+        print(err)
+        return
+
+    try:
+        validate_name_data(name)
+    except ErrorAlreadyExists as err:
+        print(err)
+        return
+
+    try:
+        validate_sector(sector)
+    except ErrorAlreadyExists as err:
+        print(err)
+        return
+
     company = {
         'Symbol': symbol,
         'Name': name,
@@ -87,6 +110,12 @@ def add_new_company(symbol, name, sector, price: str) -> None:
 
 
 def update_company_name(symbol, name: str) -> None:
+    try:
+        validate_update_company(symbol)
+    except ErrorAlreadyExists as err:
+        print(err)
+        return
+
     new_file = []
     for row in dictreader_file_csv500():
         if symbol.lower() == row.get('Symbol').lower():
@@ -127,3 +156,7 @@ def populate_file_with_random_data(number: str) -> None:
         new_file.append(new_company)
         new_company = {}
     writer_file_csv500(new_file)
+
+
+def truncate_all(func):
+    writer_file_csv500(func)
