@@ -1,6 +1,5 @@
 """Module validating received data"""
 from errors import IncorrectUserInputError
-from data_access import dictreader_file_csv500
 
 
 def validate_choice(choice: str) -> None:
@@ -11,17 +10,11 @@ def validate_choice(choice: str) -> None:
         raise IncorrectUserInputError('Choice must be from 1 to 10')
 
 
-def validate_name_company(name: str) -> None:
+def validate_name_company_choice(name: str) -> None:
     if not 3 <= len(name) <= 50:
         raise IncorrectUserInputError(
             'Name must be between 3 to 50 characters'
             )
-
-    for row in dictreader_file_csv500():
-        if name.lower() == row.get('Name').lower():
-            raise IncorrectUserInputError(
-                'A company with this name already exists.'
-                )
 
 
 def validate_symbol(symbol: str) -> None:
@@ -34,32 +27,17 @@ def validate_symbol(symbol: str) -> None:
         if i.isdigit():
             raise IncorrectUserInputError('Should not be digit.')
 
-    if not symbol.isupper():
-        raise IncorrectUserInputError('Must contain only capital letters')
-
     if not symbol.isascii():
         raise IncorrectUserInputError(
             'Must contain only uppercase, latin letters'
             )
 
-    for row in dictreader_file_csv500():
-        if symbol.lower() == row.get('Symbol').lower():
-            raise IncorrectUserInputError(
-                'A company with this symbol already exists.'
-                )
-
-
-def validate_sector(sector) -> None:
-    sector_value = set()
-    for row in dictreader_file_csv500():
-        sector_value.add(row.get('Sector'))
-
-    if sector not in sector_value:
-        raise IncorrectUserInputError('Wrong sector name.')
+    if not symbol.isupper():
+        raise IncorrectUserInputError('Must contain only capital letters')
 
 
 def validate_price(price: str) -> None:
-    if not price.replace('.', '', 1).isdigit():
+    if not price.replace('.', '', 1).replace('-', '', 1).isdigit():
         raise IncorrectUserInputError('Must be a floating point number.')
 
     if not 1 <= float(price) <= 1000:
@@ -68,12 +46,11 @@ def validate_price(price: str) -> None:
             )
 
 
-def validate_update_company(symbol: str) -> None:
-    symbol_value = set()
-    for row in dictreader_file_csv500():
-        symbol_value.add(row.get('Symbol').lower())
+def validate_number_of_generated_companies(number: str):
+    if not number.isdigit():
+        raise IncorrectUserInputError('The entered character is not a digit')
 
-    if symbol.lower() in symbol_value:
+    if not 1 <= int(number) <= 10000:
         raise IncorrectUserInputError(
-            'The input character is not in the file'
+            'The price should be in the range from 1 to 10000'
             )
