@@ -39,11 +39,15 @@ while True:
     if int(choice) == 1:
         company_name = input('Enter the name of company: ')
         companies = find_info_by_name(company_name)
+        if companies is None:
+            continue
         print(f'Companies with the name: {company_name}', *companies, sep='\n')
 
     elif int(choice) == 2:
         sector_name = input('Enter the name of sector: ')
         company = get_all_companies_by_sector(sector_name)
+        if company is None:
+            continue
         print(f'Companies in the sector: {sector_name}', *company, sep='\n')
 
     elif int(choice) == 3:
