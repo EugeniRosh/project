@@ -10,28 +10,38 @@ from data_access import (
     validate_name_data,
     validate_sector,
     )
-from functools import wraps
+import time
 from faker import Faker
 from random import choice, uniform
 
 fake = Faker()
 dict_cache = {}
+previous_run = 0
 
 
-def cache(func):
-    """Query Cache Detector and Cache Creator"""
-    @wraps(func)
-    def wrapper(request):
-        global dict_cache
-        if dict_cache.get(request) is not None:
-            print(dict_cache.get(request))
-        else:
-            dict_cache.setdefault(request, func(request))
-            return func(request)
-    return wrapper
+def cache(seconds):
+    def inner(func):
+        def wrapper(request):
+            global dict_cache, previous_run
+
+            next_run = time.time()
+
+            if next_run - previous_run > seconds:
+                dict_cache.clear()
+
+            previous_run = next_run
+
+            if dict_cache.get(request) is not None:
+                print(dict_cache.get(request))
+                return
+            else:
+                dict_cache.setdefault(request, func(request))
+                return func(request)
+        return wrapper
+    return inner
 
 
-@cache
+@cache(30)
 def find_info_by_name(company: str) -> list:
     companies = []
     for row in dictreader_file_csv500():
@@ -46,7 +56,7 @@ def find_info_by_name(company: str) -> list:
     return companies
 
 
-@cache
+@cache(30)
 def get_all_companies_by_sector(sector: str) -> list:
     company = []
     for row in dictreader_file_csv500():
