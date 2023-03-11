@@ -1,0 +1,105 @@
+from copy import deepcopy
+
+
+class EmptyLibraryError(Exception):
+    ...
+
+
+class Book:
+    def __init__(self, name, description, pages, autor, price):
+        self.name = name
+        self.description = description
+        self.pages = pages
+        self.autor = autor
+        self.price = price
+
+    def to_dict(self):
+        book_dict = {
+            'Name': self.name,
+            'Description': self.description,
+            'Pages': self.pages,
+            'Autor': self.autor,
+            'Price': self.price,
+            }
+        return book_dict
+
+    def contains_word(self, world):
+        return (
+            world in self.name.lower().split()
+            or world in self.description.lower().split()
+            )
+
+    def __gt__(self, other):
+        if not isinstance(other, Book):
+            raise ValueError('The second object must be a class Book')
+
+        return self.pages > other.pages
+
+    def __ge__(self, other):
+        if not isinstance(other, Book):
+            raise ValueError('The second object must be a class Book')
+
+        return self.pages >= other.pages
+
+    def __eq__(self, other):
+        if not isinstance(other, Book):
+            raise ValueError('The second object must be a class Book')
+
+        return self.to_dict() == other.to_dict()
+
+
+book1 = Book("1984", "Some description", 500, "Orwell", 10)
+book2 = Book(
+            "Learn Python",
+            "This book will teach you how to learn python", 1000,
+            "Luhts",
+            49
+            )
+
+print(book1.to_dict())
+
+print(book2.contains_word('learn'))
+
+print(book2 == book1, book1 < book2)
+
+
+class Library:
+    def __init__(self):
+        self.books = []
+
+    def add_book(self, book):
+        self.books.append(book)
+
+    def get_books(self):
+        book = []
+        for i in self.books:
+            book.append({
+                'Book': i.to_dict(),
+            })
+
+        return book
+
+    def remove_book(self, book):
+        self.books.remove(book)
+
+    def find_the_biggest_book(self):
+        if len(self.books) != 0:
+            books_copy = deepcopy(self.books)
+            books_copy.sort(key=lambda book: book.pages, reverse=True)
+            return books_copy[0].to_dict()
+        else:
+            raise EmptyLibraryError('The library does not contain books')
+
+    def __len__(self):
+        return len(self.books)
+
+
+library = Library()
+library.add_book(book1)
+library.add_book(book2)
+
+print(library.find_the_biggest_book())
+
+library.remove_book(book2)
+
+print(library.get_books())
